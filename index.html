@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Estado de vuelo Qatar Airways | Madrid a Beijing</title>
+    <meta
+      name="description"
+      content="Panel simple para revisar si tu ruta Madrid - Doha - Beijing con Qatar Airways parece operar o no."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero surface reveal">
+        <div class="hero-copy">
+          <p class="eyebrow">Centro de control personal</p>
+          <h1>Madrid &rarr; Doha &rarr; Beijing</h1>
+          <p class="hero-summary">
+            Una vista rapida para decidir si tu viaje con Qatar Airways parece
+            seguir adelante o si conviene esperar una confirmacion oficial.
+          </p>
+        </div>
+
+        <div class="hero-status">
+          <p class="mini-label">Veredicto actual</p>
+          <div class="decision-badge decision-watch">
+            Operacion posible, pero todavia no confirmada
+          </div>
+          <p class="decision-note" id="decision-note"></p>
+        </div>
+      </header>
+
+      <main class="dashboard">
+        <section class="snapshot surface reveal">
+          <div class="section-heading">
+            <p class="eyebrow">Lectura rapida</p>
+            <h2>Lo que sabemos hoy</h2>
+          </div>
+
+          <div class="metric-grid" id="metric-grid"></div>
+        </section>
+
+        <section class="itinerary reveal">
+          <div class="section-heading">
+            <p class="eyebrow">Tus tramos</p>
+            <h2>Seguimiento por vuelo</h2>
+          </div>
+
+          <div class="segment-grid" id="segment-grid"></div>
+        </section>
+
+        <section class="signals reveal">
+          <div class="signal-card surface">
+            <p class="eyebrow">Senales favorables</p>
+            <h2>Por que podria salir</h2>
+            <ul id="positive-signals"></ul>
+          </div>
+
+          <div class="signal-card surface caution">
+            <p class="eyebrow">Senales de riesgo</p>
+            <h2>Por que aun no es seguro</h2>
+            <ul id="risk-signals"></ul>
+          </div>
+        </section>
+
+        <section class="sources surface reveal">
+          <div class="section-heading">
+            <p class="eyebrow">Base oficial</p>
+            <h2>Informacion que alimenta este panel</h2>
+          </div>
+
+          <div class="source-list" id="source-list"></div>
+        </section>
+
+        <section class="actions surface reveal">
+          <div class="section-heading">
+            <p class="eyebrow">Antes de salir al aeropuerto</p>
+            <h2>Comprobaciones finales</h2>
+          </div>
+
+          <div class="checklist">
+            <p>
+              Si alguno de estos puntos falla, la recomendacion es no asumir que
+              el vuelo va a operar todavia.
+            </p>
+            <ul>
+              <li>Revisar el estado del vuelo en la web oficial de Qatar Airways.</li>
+              <li>Confirmar que tu reserva sigue activa en "Manage booking".</li>
+              <li>Esperar email, SMS o notificacion directa para tu fecha exacta.</li>
+            </ul>
+          </div>
+
+          <div class="action-row">
+            <a
+              class="button button-primary"
+              href="https://fs.qatarairways.com/"
+              target="_blank"
+              rel="noreferrer"
+              >Abrir Flight Status</a
+            >
+            <a
+              class="button"
+              href="https://www.qatarairways.com/en/manage-booking.html"
+              target="_blank"
+              rel="noreferrer"
+              >Abrir Manage Booking</a
+            >
+            <a
+              class="button"
+              href="https://www.qatarairways.com/en/travel-alerts.html"
+              target="_blank"
+              rel="noreferrer"
+              >Ver alertas oficiales</a
+            >
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer-note reveal">
+        Este panel resume tu itinerario y las alertas oficiales visibles a
+        viernes, 13 de marzo de 2026. Si Qatar Airways cambia la operativa, el
+        dato valido siempre sera el de la web oficial y tu reserva.
+      </footer>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
