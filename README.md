@@ -27,6 +27,8 @@ npm run scrape
 
 Esto scrapea la pagina oficial de `Travel Alerts` de Qatar Airways y genera un JSON publico que GitHub Pages puede servir sin exponer la clave.
 
+Ademas, el script consulta el backend publico de `Flight Status` de Qatar Airways para buscar los tramos concretos por ruta y fecha.
+
 ## GitHub Actions
 
 Hay un workflow en [.github/workflows/update-flight-data.yml](/Users/ucademy/Workspace/Qatar/.github/workflows/update-flight-data.yml) para actualizar datos cada 6 horas o manualmente.

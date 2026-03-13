@@ -66,6 +66,29 @@ async function scrapePage(url) {
   return response.json();
 }
 
+async function fetchFlightStatus(body) {
+  const response = await fetch(
+    "https://qoreservices.qatarairways.com/fltstatus-services/flight/getStatus",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json, text/plain, */*",
+        Origin: "https://fs.qatarairways.com",
+        Referer: "https://fs.qatarairways.com/"
+      },
+      body: JSON.stringify(body)
+    }
+  );
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Flight status ${response.status}: ${text}`);
+  }
+
+  return response.json();
+}
+
 function includesAny(text, candidates) {
   const haystack = text.toLowerCase();
   return candidates.some((candidate) => haystack.includes(candidate.toLowerCase()));
@@ -95,7 +118,37 @@ function cleanAlertText(markdown) {
     .join("\n");
 }
 
-function buildOutput(alertResult) {
+function formatFlightSummary(flight) {
+  if (!flight) {
+    return "Qatar Airways no devolvio un resultado claro para esta ruta y fecha.";
+  }
+
+  const departure = flight.departureDateScheduled || "Hora no disponible";
+  const arrival = flight.arrivalDateScheduled || "Hora no disponible";
+  const aircraft = flight.equipmentDetails?.equipmentCode || "Equipo no disponible";
+
+  return `Estado oficial: ${flight.flightStatus}. Salida prevista ${departure}. Llegada prevista ${arrival}. Equipo ${aircraft}.`;
+}
+
+function decideLabel(flights, madridFound, beijingFound) {
+  const statuses = flights.map((flight) => flight?.flightStatus).filter(Boolean);
+
+  if (statuses.includes("CANCELLED")) {
+    return "Hay al menos un tramo cancelado";
+  }
+
+  if (statuses.length > 0 && statuses.every((status) => status === "SCHEDULED" || status === "ONTIME")) {
+    return "Tus vuelos aparecen programados";
+  }
+
+  if (madridFound && beijingFound) {
+    return "Operacion posible, pero todavia no confirmada";
+  }
+
+  return "Operativa incierta";
+}
+
+function buildOutput(alertResult, routeResults) {
   const generatedAt = new Date().toISOString();
   const alertMarkdown = alertResult?.data?.markdown ?? "";
   const cleanMarkdown = cleanAlertText(alertMarkdown);
@@ -114,15 +167,15 @@ function buildOutput(alertResult) {
     .filter(Boolean)
     .join(" y ") || "No detectadas";
 
-  const decisionLabel =
-    madridFound && beijingFound
-      ? "Operacion posible, pero todavia no confirmada"
-      : "Operativa incierta";
-
+  const madDohFlight = routeResults.madDoh?.flights?.find((flight) => flight.flightNumber === "150");
+  const dohPkxFlight = routeResults.dohPkx?.flights?.find((flight) => flight.flightNumber === "892");
+  const decisionLabel = decideLabel([madDohFlight, dohPkxFlight], madridFound, beijingFound);
   const decisionSummary =
-    madridFound && beijingFound
-      ? "La alerta oficial menciona Madrid y Beijing dentro del contenido extraido, pero eso no sustituye la confirmacion de tus vuelos exactos."
-      : "La alerta oficial extraida no deja clara la operacion de toda tu ruta, asi que conviene no dar el viaje por seguro.";
+    madDohFlight && dohPkxFlight
+      ? `Flight Status oficial devuelve ${madDohFlight.flightStatus} para QR150 y ${dohPkxFlight.flightStatus} para QR892 en las fechas consultadas.`
+      : madridFound && beijingFound
+        ? "La alerta oficial menciona Madrid y Beijing dentro del contenido extraido, pero eso no sustituye la confirmacion de tus vuelos exactos."
+        : "La alerta oficial extraida no deja clara la operacion de toda tu ruta, asi que conviene no dar el viaje por seguro.";
 
   const alertSummary = [
     limitedOps
@@ -133,15 +186,22 @@ function buildOutput(alertResult) {
   ].join(" ");
 
   const segments = itinerary.map((segment) => {
-    const destinationMentioned =
-      segment.departureCode === "MAD" ? madridFound : beijingFound;
+    const isFirstLeg = segment.number === "QR 150";
+    const destinationMentioned = isFirstLeg ? madridFound : beijingFound;
+    const officialFlight = isFirstLeg ? madDohFlight : dohPkxFlight;
 
     return {
       ...segment,
-      status: destinationMentioned ? "Ruta detectada en alertas" : "Ruta no detectada",
-      summary: destinationMentioned
-        ? "El scraping detecto referencias a esta ruta o ciudad en la alerta oficial de Qatar Airways. Aun hace falta comprobar Flight Status para el vuelo concreto."
-        : "El scraping no detecto una referencia clara a esta ruta en la alerta extraida. Verifica el vuelo concreto manualmente."
+      status: officialFlight?.flightStatus
+        ? `Flight Status: ${officialFlight.flightStatus}`
+        : destinationMentioned
+          ? "Ruta detectada en alertas"
+          : "Ruta no detectada",
+      summary: officialFlight
+        ? formatFlightSummary(officialFlight)
+        : destinationMentioned
+          ? "El scraping detecto referencias a esta ruta o ciudad en la alerta oficial de Qatar Airways. Aun hace falta comprobar Flight Status para el vuelo concreto."
+          : "El scraping no detecto una referencia clara a esta ruta en la alerta extraida. Verifica el vuelo concreto manualmente."
     };
   });
 
@@ -155,7 +215,7 @@ function buildOutput(alertResult) {
       {
         label: "Estado global",
         value: limitedOps ? "Operacion limitada" : "Sin bloqueo claro",
-        copy: "Resumen inferido del contenido extraido de Travel Alerts por Firecrawl."
+        copy: "Resumen inferido del contenido extraido de Travel Alerts por Firecrawl y contrastado con Flight Status oficial."
       },
       {
         label: "Tiempo hasta la salida",
@@ -169,8 +229,11 @@ function buildOutput(alertResult) {
       },
       {
         label: "Recomendacion",
-        value: "Confirmar manualmente",
-        copy: "Usa Flight Status y Manage Booking para validar QR150 y QR892 antes de salir."
+        value:
+          decisionLabel === "Tus vuelos aparecen programados"
+            ? "Seguir monitorizando"
+            : "Confirmar manualmente",
+        copy: "Manage Booking sigue siendo la verificacion final para cualquier cambio de ultima hora."
       }
     ],
     segments,
@@ -181,11 +244,17 @@ function buildOutput(alertResult) {
       beijingFound
         ? "Beijing aparece en el contenido extraido de Travel Alerts."
         : "Beijing no se detecto claramente en el ultimo scrape.",
+      madDohFlight
+        ? `QR150 aparece como ${madDohFlight.flightStatus} en Flight Status oficial.`
+        : "QR150 no devolvio estado oficial por backend en esta pasada.",
+      dohPkxFlight
+        ? `QR892 aparece como ${dohPkxFlight.flightStatus} en Flight Status oficial.`
+        : "QR892 no devolvio estado oficial por backend en esta pasada.",
       "La extraccion se ha hecho contra una pagina oficial de Qatar Airways mediante Firecrawl."
     ],
     riskSignals: [
-      "Travel Alerts no garantiza por si sola el estado exacto de QR150 o QR892.",
-      "La pagina Flight Status de Qatar sigue siendo la comprobacion final recomendada.",
+      "El estado SCHEDULED no excluye cambios posteriores, retrasos o cancelaciones de ultima hora.",
+      "Manage Booking y cualquier comunicacion directa de Qatar siguen teniendo prioridad operativa.",
       limitedOps
         ? "El texto extraido contiene senales de operacion reducida o condicionada."
         : "Aunque no haya alerta fuerte, la web oficial puede cambiar antes de la salida."
@@ -199,8 +268,11 @@ function buildOutput(alertResult) {
       },
       {
         date: new Date(generatedAt).toISOString().slice(0, 10),
-        title: "Flight Status manual",
-        body: "Mantenido como verificacion final porque el flujo interactivo del estado de vuelo aun no se automatiza en esta version.",
+        title: "Flight Status oficial",
+        body:
+          madDohFlight && dohPkxFlight
+            ? `Backend oficial devuelve ${madDohFlight.flightStatus} para QR150 y ${dohPkxFlight.flightStatus} para QR892 en las fechas consultadas.`
+            : "No se obtuvo una respuesta clara de Flight Status para todos los tramos en esta pasada.",
         href: "https://fs.qatarairways.com/"
       }
     ]
@@ -210,7 +282,23 @@ function buildOutput(alertResult) {
 async function main() {
   console.log("Scraping Qatar Travel Alerts with Firecrawl...");
   const alertResult = await scrapePage("https://www.qatarairways.com/en/travel-alerts.html");
-  const output = buildOutput(alertResult);
+  console.log("Fetching official Qatar Flight Status backend...");
+  const [madDoh, dohPkx] = await Promise.all([
+    fetchFlightStatus({
+      scheduledDate: "2026-03-18",
+      appLocale: "en",
+      departureStation: "MAD",
+      arrivalStation: "DOH"
+    }),
+    fetchFlightStatus({
+      scheduledDate: "2026-03-19",
+      appLocale: "en",
+      departureStation: "DOH",
+      arrivalStation: "PKX"
+    })
+  ]);
+
+  const output = buildOutput(alertResult, { madDoh, dohPkx });
 
   await mkdir(dirname(OUTPUT_PATH), { recursive: true });
   await writeFile(OUTPUT_PATH, `${JSON.stringify(output, null, 2)}\n`, "utf8");

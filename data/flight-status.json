@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-03-13T12:22:12.170Z",
+  "generatedAt": "2026-03-13T12:33:05.873Z",
   "decision": {
-    "label": "Operacion posible, pero todavia no confirmada",
-    "summary": "La alerta oficial menciona Madrid y Beijing dentro del contenido extraido, pero eso no sustituye la confirmacion de tus vuelos exactos."
+    "label": "Tus vuelos aparecen programados",
+    "summary": "Flight Status oficial devuelve SCHEDULED para QR150 y SCHEDULED para QR892 en las fechas consultadas."
   },
   "metrics": [
     {
       "label": "Estado global",
       "value": "Operacion limitada",
-      "copy": "Resumen inferido del contenido extraido de Travel Alerts por Firecrawl."
+      "copy": "Resumen inferido del contenido extraido de Travel Alerts por Firecrawl y contrastado con Flight Status oficial."
     },
     {
       "label": "Tiempo hasta la salida",
@@ -22,8 +22,8 @@
     },
     {
       "label": "Recomendacion",
-      "value": "Confirmar manualmente",
-      "copy": "Usa Flight Status y Manage Booking para validar QR150 y QR892 antes de salir."
+      "value": "Seguir monitorizando",
+      "copy": "Manage Booking sigue siendo la verificacion final para cualquier cambio de ultima hora."
     }
   ],
   "segments": [
@@ -40,8 +40,8 @@
       "arrivalAirport": "Doha Hamad International",
       "aircraft": "Boeing 777-300ER",
       "duration": "6 h 30 m",
-      "status": "Ruta detectada en alertas",
-      "summary": "El scraping detecto referencias a esta ruta o ciudad en la alerta oficial de Qatar Airways. Aun hace falta comprobar Flight Status para el vuelo concreto."
+      "status": "Flight Status: SCHEDULED",
+      "summary": "Estado oficial: SCHEDULED. Salida prevista Wed Mar 18 2026 15:20. Llegada prevista Wed Mar 18 2026 23:55. Equipo 77W."
     },
     {
       "number": "QR 892",
@@ -56,18 +56,20 @@
       "arrivalAirport": "Beijing Daxing International",
       "aircraft": "Airbus A350-900",
       "duration": "8 h 00 m",
-      "status": "Ruta detectada en alertas",
-      "summary": "El scraping detecto referencias a esta ruta o ciudad en la alerta oficial de Qatar Airways. Aun hace falta comprobar Flight Status para el vuelo concreto."
+      "status": "Flight Status: SCHEDULED",
+      "summary": "Estado oficial: SCHEDULED. Salida prevista Thu Mar 19 2026 01:55. Llegada prevista Thu Mar 19 2026 14:45. Equipo 359."
     }
   ],
   "positiveSignals": [
     "Madrid aparece en el contenido extraido de Travel Alerts.",
     "Beijing aparece en el contenido extraido de Travel Alerts.",
+    "QR150 aparece como SCHEDULED en Flight Status oficial.",
+    "QR892 aparece como SCHEDULED en Flight Status oficial.",
     "La extraccion se ha hecho contra una pagina oficial de Qatar Airways mediante Firecrawl."
   ],
   "riskSignals": [
-    "Travel Alerts no garantiza por si sola el estado exacto de QR150 o QR892.",
-    "La pagina Flight Status de Qatar sigue siendo la comprobacion final recomendada.",
+    "El estado SCHEDULED no excluye cambios posteriores, retrasos o cancelaciones de ultima hora.",
+    "Manage Booking y cualquier comunicacion directa de Qatar siguen teniendo prioridad operativa.",
     "El texto extraido contiene senales de operacion reducida o condicionada."
   ],
   "sources": [
@@ -79,8 +81,8 @@
     },
     {
       "date": "2026-03-13",
-      "title": "Flight Status manual",
-      "body": "Mantenido como verificacion final porque el flujo interactivo del estado de vuelo aun no se automatiza en esta version.",
+      "title": "Flight Status oficial",
+      "body": "Backend oficial devuelve SCHEDULED para QR150 y SCHEDULED para QR892 en las fechas consultadas.",
       "href": "https://fs.qatarairways.com/"
     }
   ]
