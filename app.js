@@ -1,6 +1,11 @@
 const tripData = {
   reviewedAt: "2026-03-13T00:30:00+03:00",
   reviewTimeZone: "Asia/Qatar",
+  decision: {
+    label: "Operacion posible, pero todavia no confirmada",
+    summary:
+      "Panel base cargado. Si existe un JSON generado por Firecrawl, esta pagina usara esa version automaticamente."
+  },
   segments: [
     {
       number: "QR 150",
@@ -126,7 +131,13 @@ function formatLocal(iso, options, timeZone) {
 
 function renderMetrics() {
   const container = document.getElementById("metric-grid");
-  container.innerHTML = tripData.metrics
+  const metrics = tripData.metrics.map((metric) =>
+    metric.label === "Tiempo hasta la salida"
+      ? { ...metric, value: countdownLabel("2026-03-18T15:20:00+01:00") }
+      : metric
+  );
+
+  container.innerHTML = metrics
     .map(
       (metric) => `
         <article class="metric-card">
@@ -244,8 +255,8 @@ function renderSources() {
 function renderDecisionNote() {
   const note = document.getElementById("decision-note");
   note.textContent =
-    `Revision basada en avisos oficiales de Qatar Airways actualizados a ${formatLocal(
-      tripData.reviewedAt,
+    `${tripData.decision.summary} Revision basada en avisos oficiales de Qatar Airways actualizados a ${formatLocal(
+      tripData.generatedAt || tripData.reviewedAt,
       {
         day: "numeric",
         month: "long",
@@ -255,8 +266,69 @@ function renderDecisionNote() {
     )}.`;
 }
 
-renderMetrics();
-renderSegments();
-renderSignals();
-renderSources();
-renderDecisionNote();
+function renderDecisionBadge() {
+  const badge = document.querySelector(".decision-badge");
+  if (badge) {
+    badge.textContent = tripData.decision.label;
+  }
+}
+
+async function hydrateFromGeneratedData() {
+  try {
+    const response = await fetch("./data/flight-status.json", { cache: "no-store" });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const generatedData = await response.json();
+
+    if (generatedData?.decision) {
+      tripData.decision = generatedData.decision;
+    }
+
+    if (generatedData?.generatedAt) {
+      tripData.generatedAt = generatedData.generatedAt;
+    }
+
+    if (Array.isArray(generatedData?.metrics)) {
+      tripData.metrics = generatedData.metrics;
+    }
+
+    if (Array.isArray(generatedData?.positiveSignals)) {
+      tripData.positiveSignals = generatedData.positiveSignals;
+    }
+
+    if (Array.isArray(generatedData?.riskSignals)) {
+      tripData.riskSignals = generatedData.riskSignals;
+    }
+
+    if (Array.isArray(generatedData?.sources)) {
+      tripData.sources = generatedData.sources;
+    }
+
+    if (Array.isArray(generatedData?.segments)) {
+      tripData.segments = tripData.segments.map((segment) => {
+        const generatedSegment = generatedData.segments.find(
+          (item) => item.number === segment.number
+        );
+
+        return generatedSegment ? { ...segment, ...generatedSegment } : segment;
+      });
+    }
+  } catch (error) {
+    console.warn("No generated flight data found. Using built-in data.", error);
+  }
+}
+
+async function init() {
+  await hydrateFromGeneratedData();
+  renderDecisionBadge();
+  renderMetrics();
+  renderSegments();
+  renderSignals();
+  renderSources();
+  renderDecisionNote();
+}
+
+init();

@@ -1,0 +1,10 @@
+{
+  "name": "qatar-flight-status",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "scrape": "node ./scripts/scrape-qatar.mjs",
+    "build:data": "node ./scripts/scrape-qatar.mjs"
+  }
+}
