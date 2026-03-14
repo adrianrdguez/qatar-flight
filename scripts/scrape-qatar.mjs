@@ -35,12 +35,12 @@ const itinerary = [
   }
 ];
 
-if (!FIRECRAWL_API_KEY) {
-  console.error("Missing FIRECRAWL_API_KEY. Set it in your shell or .env before running.");
-  process.exit(1);
-}
-
 async function scrapePage(url) {
+  if (!FIRECRAWL_API_KEY) {
+    console.warn("FIRECRAWL_API_KEY is missing. Skipping Travel Alerts scrape.");
+    return null;
+  }
+
   const response = await fetch("https://api.firecrawl.dev/v2/scrape", {
     method: "POST",
     headers: {
@@ -178,11 +178,17 @@ function buildOutput(alertResult, routeResults) {
         : "La alerta oficial extraida no deja clara la operacion de toda tu ruta, asi que conviene no dar el viaje por seguro.";
 
   const alertSummary = [
-    limitedOps
-      ? "El contenido extraido sugiere una operacion limitada o condicionada."
-      : "El contenido extraido no muestra un bloqueo claro de toda la operativa.",
-    madridFound ? "Madrid aparece mencionado." : "Madrid no se detecto claramente.",
-    beijingFound ? "Beijing aparece mencionado." : "Beijing no se detecto claramente."
+    alertResult
+      ? limitedOps
+        ? "El contenido extraido sugiere una operacion limitada o condicionada."
+        : "El contenido extraido no muestra un bloqueo claro de toda la operativa."
+      : "No se ejecuto Travel Alerts porque FIRECRAWL_API_KEY no estaba disponible.",
+    alertResult
+      ? madridFound ? "Madrid aparece mencionado." : "Madrid no se detecto claramente."
+      : "Sin lectura automatica de alertas para Madrid.",
+    alertResult
+      ? beijingFound ? "Beijing aparece mencionado." : "Beijing no se detecto claramente."
+      : "Sin lectura automatica de alertas para Beijing."
   ].join(" ");
 
   const segments = itinerary.map((segment) => {
@@ -214,8 +220,12 @@ function buildOutput(alertResult, routeResults) {
     metrics: [
       {
         label: "Estado global",
-        value: limitedOps ? "Operacion limitada" : "Sin bloqueo claro",
-        copy: "Resumen inferido del contenido extraido de Travel Alerts por Firecrawl y contrastado con Flight Status oficial."
+        value: alertResult
+          ? limitedOps ? "Operacion limitada" : "Sin bloqueo claro"
+          : "Solo Flight Status",
+        copy: alertResult
+          ? "Resumen inferido del contenido extraido de Travel Alerts por Firecrawl y contrastado con Flight Status oficial."
+          : "Se ha podido consultar Flight Status oficial, pero no Travel Alerts por falta de FIRECRAWL_API_KEY."
       },
       {
         label: "Tiempo hasta la salida",
@@ -224,8 +234,10 @@ function buildOutput(alertResult, routeResults) {
       },
       {
         label: "Rutas vistas en alertas",
-        value: routeSignalValue,
-        copy: "Coincidencias de ciudades detectadas automaticamente en la alerta oficial."
+        value: alertResult ? routeSignalValue : "Sin Travel Alerts",
+        copy: alertResult
+          ? "Coincidencias de ciudades detectadas automaticamente en la alerta oficial."
+          : "Este valor queda desactivado cuando no hay clave de Firecrawl."
       },
       {
         label: "Recomendacion",
@@ -238,12 +250,16 @@ function buildOutput(alertResult, routeResults) {
     ],
     segments,
     positiveSignals: [
-      madridFound
-        ? "Madrid aparece en el contenido extraido de Travel Alerts."
-        : "Madrid no se detecto claramente en el ultimo scrape.",
-      beijingFound
-        ? "Beijing aparece en el contenido extraido de Travel Alerts."
-        : "Beijing no se detecto claramente en el ultimo scrape.",
+      alertResult
+        ? madridFound
+          ? "Madrid aparece en el contenido extraido de Travel Alerts."
+          : "Madrid no se detecto claramente en el ultimo scrape."
+        : "Travel Alerts no se ha consultado en esta pasada.",
+      alertResult
+        ? beijingFound
+          ? "Beijing aparece en el contenido extraido de Travel Alerts."
+          : "Beijing no se detecto claramente en el ultimo scrape."
+        : "La comprobacion de Beijing se ha apoyado solo en Flight Status oficial.",
       madDohFlight
         ? `QR150 aparece como ${madDohFlight.flightStatus} en Flight Status oficial.`
         : "QR150 no devolvio estado oficial por backend en esta pasada.",
@@ -255,9 +271,11 @@ function buildOutput(alertResult, routeResults) {
     riskSignals: [
       "El estado SCHEDULED no excluye cambios posteriores, retrasos o cancelaciones de ultima hora.",
       "Manage Booking y cualquier comunicacion directa de Qatar siguen teniendo prioridad operativa.",
-      limitedOps
-        ? "El texto extraido contiene senales de operacion reducida o condicionada."
-        : "Aunque no haya alerta fuerte, la web oficial puede cambiar antes de la salida."
+      alertResult
+        ? limitedOps
+          ? "El texto extraido contiene senales de operacion reducida o condicionada."
+          : "Aunque no haya alerta fuerte, la web oficial puede cambiar antes de la salida."
+        : "Sin FIRECRAWL_API_KEY no se procesa Travel Alerts, asi que se pierde parte del contexto general."
     ],
     sources: [
       {

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-13T12:33:05.873Z",
+  "generatedAt": "2026-03-14T02:48:36.598Z",
   "decision": {
     "label": "Tus vuelos aparecen programados",
     "summary": "Flight Status oficial devuelve SCHEDULED para QR150 y SCHEDULED para QR892 en las fechas consultadas."
@@ -7,8 +7,8 @@
   "metrics": [
     {
       "label": "Estado global",
-      "value": "Operacion limitada",
-      "copy": "Resumen inferido del contenido extraido de Travel Alerts por Firecrawl y contrastado con Flight Status oficial."
+      "value": "Solo Flight Status",
+      "copy": "Se ha podido consultar Flight Status oficial, pero no Travel Alerts por falta de FIRECRAWL_API_KEY."
     },
     {
       "label": "Tiempo hasta la salida",
@@ -17,8 +17,8 @@
     },
     {
       "label": "Rutas vistas en alertas",
-      "value": "Madrid y Beijing",
-      "copy": "Coincidencias de ciudades detectadas automaticamente en la alerta oficial."
+      "value": "Sin Travel Alerts",
+      "copy": "Este valor queda desactivado cuando no hay clave de Firecrawl."
     },
     {
       "label": "Recomendacion",
@@ -61,8 +61,8 @@
     }
   ],
   "positiveSignals": [
-    "Madrid aparece en el contenido extraido de Travel Alerts.",
-    "Beijing aparece en el contenido extraido de Travel Alerts.",
+    "Travel Alerts no se ha consultado en esta pasada.",
+    "La comprobacion de Beijing se ha apoyado solo en Flight Status oficial.",
     "QR150 aparece como SCHEDULED en Flight Status oficial.",
     "QR892 aparece como SCHEDULED en Flight Status oficial.",
     "La extraccion se ha hecho contra una pagina oficial de Qatar Airways mediante Firecrawl."
@@ -70,17 +70,17 @@
   "riskSignals": [
     "El estado SCHEDULED no excluye cambios posteriores, retrasos o cancelaciones de ultima hora.",
     "Manage Booking y cualquier comunicacion directa de Qatar siguen teniendo prioridad operativa.",
-    "El texto extraido contiene senales de operacion reducida o condicionada."
+    "Sin FIRECRAWL_API_KEY no se procesa Travel Alerts, asi que se pierde parte del contexto general."
   ],
   "sources": [
     {
-      "date": "2026-03-13",
+      "date": "2026-03-14",
       "title": "Travel Alerts procesado por Firecrawl",
-      "body": "El contenido extraido sugiere una operacion limitada o condicionada. Madrid aparece mencionado. Beijing aparece mencionado.",
+      "body": "No se ejecuto Travel Alerts porque FIRECRAWL_API_KEY no estaba disponible. Sin lectura automatica de alertas para Madrid. Sin lectura automatica de alertas para Beijing.",
       "href": "https://www.qatarairways.com/en/travel-alerts.html"
     },
     {
-      "date": "2026-03-13",
+      "date": "2026-03-14",
       "title": "Flight Status oficial",
       "body": "Backend oficial devuelve SCHEDULED para QR150 y SCHEDULED para QR892 en las fechas consultadas.",
       "href": "https://fs.qatarairways.com/"
