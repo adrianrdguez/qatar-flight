@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-15T06:36:27.805Z",
+  "generatedAt": "2026-03-15T12:28:08.491Z",
   "decision": {
     "label": "Tus vuelos aparecen programados",
     "summary": "Flight Status oficial devuelve SCHEDULED para QR150 y SCHEDULED para QR892 en las fechas consultadas."
