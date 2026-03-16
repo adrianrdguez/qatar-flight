@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-03-15T18:27:29.860Z",
+  "generatedAt": "2026-03-16T00:58:37.968Z",
   "decision": {
-    "label": "Tus vuelos aparecen programados",
-    "summary": "Flight Status oficial devuelve SCHEDULED para QR150 y SCHEDULED para QR892 en las fechas consultadas."
+    "label": "Hay al menos un tramo cancelado",
+    "summary": "Flight Status oficial devuelve CANCELLED para QR150 y CANCELLED para QR892 en las fechas consultadas."
   },
   "metrics": [
     {
@@ -22,7 +22,7 @@
     },
     {
       "label": "Recomendacion",
-      "value": "Seguir monitorizando",
+      "value": "Confirmar manualmente",
       "copy": "Manage Booking sigue siendo la verificacion final para cualquier cambio de ultima hora."
     }
   ],
@@ -40,8 +40,8 @@
       "arrivalAirport": "Doha Hamad International",
       "aircraft": "Boeing 777-300ER",
       "duration": "6 h 30 m",
-      "status": "Flight Status: SCHEDULED",
-      "summary": "Estado oficial: SCHEDULED. Salida prevista Wed Mar 18 2026 15:20. Llegada prevista Wed Mar 18 2026 23:55. Equipo 77W."
+      "status": "Flight Status: CANCELLED",
+      "summary": "Estado oficial: CANCELLED. Salida prevista Wed Mar 18 2026 15:20. Llegada prevista Wed Mar 18 2026 23:55. Equipo 77W."
     },
     {
       "number": "QR 892",
@@ -56,15 +56,15 @@
       "arrivalAirport": "Beijing Daxing International",
       "aircraft": "Airbus A350-900",
       "duration": "8 h 00 m",
-      "status": "Flight Status: SCHEDULED",
-      "summary": "Estado oficial: SCHEDULED. Salida prevista Thu Mar 19 2026 01:55. Llegada prevista Thu Mar 19 2026 14:45. Equipo 359."
+      "status": "Flight Status: CANCELLED",
+      "summary": "Estado oficial: CANCELLED. Salida prevista Thu Mar 19 2026 01:55. Llegada prevista Thu Mar 19 2026 14:45. Equipo 359."
     }
   ],
   "positiveSignals": [
     "Travel Alerts no se ha consultado en esta pasada.",
     "La comprobacion de Beijing se ha apoyado solo en Flight Status oficial.",
-    "QR150 aparece como SCHEDULED en Flight Status oficial.",
-    "QR892 aparece como SCHEDULED en Flight Status oficial.",
+    "QR150 aparece como CANCELLED en Flight Status oficial.",
+    "QR892 aparece como CANCELLED en Flight Status oficial.",
     "La extraccion se ha hecho contra una pagina oficial de Qatar Airways mediante Firecrawl."
   ],
   "riskSignals": [
@@ -74,15 +74,15 @@
   ],
   "sources": [
     {
-      "date": "2026-03-15",
+      "date": "2026-03-16",
       "title": "Travel Alerts procesado por Firecrawl",
       "body": "No se ejecuto Travel Alerts porque FIRECRAWL_API_KEY no estaba disponible. Sin lectura automatica de alertas para Madrid. Sin lectura automatica de alertas para Beijing.",
       "href": "https://www.qatarairways.com/en/travel-alerts.html"
     },
     {
-      "date": "2026-03-15",
+      "date": "2026-03-16",
       "title": "Flight Status oficial",
-      "body": "Backend oficial devuelve SCHEDULED para QR150 y SCHEDULED para QR892 en las fechas consultadas.",
+      "body": "Backend oficial devuelve CANCELLED para QR150 y CANCELLED para QR892 en las fechas consultadas.",
       "href": "https://fs.qatarairways.com/"
     }
   ]
