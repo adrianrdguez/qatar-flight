@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-17T18:35:13.719Z",
+  "generatedAt": "2026-03-18T00:53:57.911Z",
   "decision": {
     "label": "Hay al menos un tramo cancelado",
     "summary": "Flight Status oficial devuelve CANCELLED para QR150 y CANCELLED para QR892 en las fechas consultadas."
@@ -74,13 +74,13 @@
   ],
   "sources": [
     {
-      "date": "2026-03-17",
+      "date": "2026-03-18",
       "title": "Travel Alerts procesado por Firecrawl",
       "body": "No se ejecuto Travel Alerts porque FIRECRAWL_API_KEY no estaba disponible. Sin lectura automatica de alertas para Madrid. Sin lectura automatica de alertas para Beijing.",
       "href": "https://www.qatarairways.com/en/travel-alerts.html"
     },
     {
-      "date": "2026-03-17",
+      "date": "2026-03-18",
       "title": "Flight Status oficial",
       "body": "Backend oficial devuelve CANCELLED para QR150 y CANCELLED para QR892 en las fechas consultadas.",
       "href": "https://fs.qatarairways.com/"
