@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-20T12:28:25.943Z",
+  "generatedAt": "2026-03-20T18:28:40.098Z",
   "decision": {
     "label": "Hay al menos un tramo cancelado",
     "summary": "Flight Status oficial devuelve CANCELLED para QR150 y CANCELLED para QR892 en las fechas consultadas."
