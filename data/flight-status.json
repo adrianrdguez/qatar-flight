@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-03-20T18:28:40.098Z",
+  "generatedAt": "2026-03-21T00:48:51.837Z",
   "decision": {
-    "label": "Hay al menos un tramo cancelado",
-    "summary": "Flight Status oficial devuelve CANCELLED para QR150 y CANCELLED para QR892 en las fechas consultadas."
+    "label": "Operativa incierta",
+    "summary": "La alerta oficial extraida no deja clara la operacion de toda tu ruta, asi que conviene no dar el viaje por seguro."
   },
   "metrics": [
     {
@@ -40,8 +40,8 @@
       "arrivalAirport": "Doha Hamad International",
       "aircraft": "Boeing 777-300ER",
       "duration": "6 h 30 m",
-      "status": "Flight Status: CANCELLED",
-      "summary": "Estado oficial: CANCELLED. Salida prevista Wed Mar 18 2026 15:20. Llegada prevista Wed Mar 18 2026 23:55. Equipo 77W."
+      "status": "Ruta no detectada",
+      "summary": "El scraping no detecto una referencia clara a esta ruta en la alerta extraida. Verifica el vuelo concreto manualmente."
     },
     {
       "number": "QR 892",
@@ -56,15 +56,15 @@
       "arrivalAirport": "Beijing Daxing International",
       "aircraft": "Airbus A350-900",
       "duration": "8 h 00 m",
-      "status": "Flight Status: CANCELLED",
-      "summary": "Estado oficial: CANCELLED. Salida prevista Thu Mar 19 2026 01:55. Llegada prevista Thu Mar 19 2026 14:45. Equipo 359."
+      "status": "Ruta no detectada",
+      "summary": "El scraping no detecto una referencia clara a esta ruta en la alerta extraida. Verifica el vuelo concreto manualmente."
     }
   ],
   "positiveSignals": [
     "Travel Alerts no se ha consultado en esta pasada.",
     "La comprobacion de Beijing se ha apoyado solo en Flight Status oficial.",
-    "QR150 aparece como CANCELLED en Flight Status oficial.",
-    "QR892 aparece como CANCELLED en Flight Status oficial.",
+    "QR150 no devolvio estado oficial por backend en esta pasada.",
+    "QR892 no devolvio estado oficial por backend en esta pasada.",
     "La extraccion se ha hecho contra una pagina oficial de Qatar Airways mediante Firecrawl."
   ],
   "riskSignals": [
@@ -74,15 +74,15 @@
   ],
   "sources": [
     {
-      "date": "2026-03-20",
+      "date": "2026-03-21",
       "title": "Travel Alerts procesado por Firecrawl",
       "body": "No se ejecuto Travel Alerts porque FIRECRAWL_API_KEY no estaba disponible. Sin lectura automatica de alertas para Madrid. Sin lectura automatica de alertas para Beijing.",
       "href": "https://www.qatarairways.com/en/travel-alerts.html"
     },
     {
-      "date": "2026-03-20",
+      "date": "2026-03-21",
       "title": "Flight Status oficial",
-      "body": "Backend oficial devuelve CANCELLED para QR150 y CANCELLED para QR892 en las fechas consultadas.",
+      "body": "No se obtuvo una respuesta clara de Flight Status para todos los tramos en esta pasada.",
       "href": "https://fs.qatarairways.com/"
     }
   ]
