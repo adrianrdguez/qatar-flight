@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-23T18:33:17.038Z",
+  "generatedAt": "2026-03-24T00:48:48.872Z",
   "decision": {
     "label": "Operativa incierta",
     "summary": "La alerta oficial extraida no deja clara la operacion de toda tu ruta, asi que conviene no dar el viaje por seguro."
@@ -74,13 +74,13 @@
   ],
   "sources": [
     {
-      "date": "2026-03-23",
+      "date": "2026-03-24",
       "title": "Travel Alerts procesado por Firecrawl",
       "body": "No se ejecuto Travel Alerts porque FIRECRAWL_API_KEY no estaba disponible. Sin lectura automatica de alertas para Madrid. Sin lectura automatica de alertas para Beijing.",
       "href": "https://www.qatarairways.com/en/travel-alerts.html"
     },
     {
-      "date": "2026-03-23",
+      "date": "2026-03-24",
       "title": "Flight Status oficial",
       "body": "No se obtuvo una respuesta clara de Flight Status para todos los tramos en esta pasada.",
       "href": "https://fs.qatarairways.com/"
